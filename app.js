@@ -10,6 +10,23 @@ const Event = require('./models/event');
 const User = require('./models/user');
 
 //Helpers
+const events =  async (eventIds) =>
+{
+    try
+    {
+        const events = await Event.find({ _id: { $in: eventIds } });
+        return events.map(event =>
+        {
+            return {
+                ...event._doc,
+                creator: user.bind(this, event.creator)
+            };
+        });
+    } catch (err)
+    {
+        throw err;
+    }
+}
 const user = async userId =>
 {
     try
@@ -17,6 +34,7 @@ const user = async userId =>
         const user = await User.findById(userId);
         return {
             ...user._doc,
+            createdEvents: events.bind(this, user._doc.createdEvents)
         };
     } catch (err)
     {
@@ -115,7 +133,7 @@ app.use('/graphql', graphqlHttp({
                 })
                 let createdEvent
                 let result = await event.save();
-                createdEvent = { ...result._doc };
+                createdEvent = { ...result._doc, creator: user.bind(this, result._doc.creator) };
                 const creator = await User.findById("62af0fdf13c1699b831071c2")
                 if (!creator)
                 {
