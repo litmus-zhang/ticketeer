@@ -24,8 +24,12 @@ const { user, transformBooking, transformEvent, events, singleEvent} = require('
     
         },
 
-        createEvent: async (args) =>
+        createEvent: async (args, req) =>
         {
+            if (!req.isAuth)
+            {
+                throw new Error('Unauthenticated!');
+            }
             const { title, description, price, date } = args.eventInput;
             try
             {
@@ -34,12 +38,12 @@ const { user, transformBooking, transformEvent, events, singleEvent} = require('
                     description,
                     price: +price,
                     date: new Date(date),
-                    creator: "62af22fdd17aa0454c1208b2"
+                    creator: req.userId
                 })
                 let createdEvent
                 let result = await event.save();
                 createdEvent = transformEvent(result);
-                const creator = await User.findById("62af22fdd17aa0454c1208b2")
+                const creator = await User.findById(req.userId);
                 if (!creator)
                 {
                     throw new Error('User not found');
