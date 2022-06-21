@@ -39,7 +39,7 @@ const { user, transformBooking, transformEvent, events, singleEvent} = require('
                     price: +price,
                     date: new Date(date),
                     creator: req.userId
-                })
+                }) 
                 let createdEvent
                 let result = await event.save();
                 createdEvent = transformEvent(result);

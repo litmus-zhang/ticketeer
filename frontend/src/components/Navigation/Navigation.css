@@ -1,0 +1,43 @@
+.main-navigation{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    background-color: rgb(9, 80, 234);
+    padding: 0 1rem;
+    display: flex;
+    height: 4rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main-navigation__logo{
+    margin: 0;
+    color: aliceblue;
+
+}
+
+.main-navigation_items{
+    display: flex;
+    align-items: flex-start;
+    justify-content: start;
+    margin-right: 3rem;
+  
+}
+
+.main-navigation_items ul{
+    align-items: flex-start;
+    list-style: none;
+    display: flex;
+   
+}
+.main-navigation_items a{
+    color: aliceblue;
+    text-decoration: none;
+    padding: 0 0.5rem;
+    transition: all 0.4s;
+}
+.main-navigation_items a:hover, .main-navigation_items a:active{
+    color: rgb(99, 139, 226);
+    font-weight: 500; 
+}
