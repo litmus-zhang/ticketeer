@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import BackDrop from '../components/Modal/BackDrop'
 import Modal from '../components/Modal/Modal'
+import AuthContext from '../context/auth-context'
 
 
 
@@ -10,7 +11,16 @@ export default class Events extends Component
   state = {
     creating: false,
   }
+  constructor(props)
+  {
+    super(props)
+    this.titleEl = React.createRef()
+    this.priceEl = React.createRef()
+    this.dateEl = React.createRef()
+    this.descEl = React.createRef()
+  }
 
+  static contextType = AuthContext
   startCreateEventHandler = () =>
   {
     this.setState({creating: true})
@@ -18,7 +28,85 @@ export default class Events extends Component
 
   modalConfirmHandler = () =>
   {
-    this.setState({creating: false})
+    this.setState({ creating: false })
+    const title = this.titleEl.current.value
+    const date = this.dateEl.current.value
+    const price = +this.priceEl.current.value
+    const desc = this.descEl.current.value
+
+    if (title.trim().length === 0 || date.trim().length === 0 || price <= 0 || desc.trim().length === 0)
+    {
+      throw new Error("Invalid input ")
+    }
+
+
+    const event = { title, price, date, desc }
+    
+    console.log(event);
+ 
+  
+      
+  const requestBody = {
+      query: `
+      mutation{
+        createEvent(eventInput:{
+          title: "${title}",
+          description: "${desc}",
+          price: ${price},
+          date:"${date}"
+        }){
+          _id
+          title
+          description
+          date
+          price
+          creator{
+            _id
+            email
+          }
+
+        }
+      }
+      `
+    }
+    const token = this.context.token
+
+
+  fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      body: JSON.stringify(requestBody), 
+      headers: {
+          'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+          
+      }
+
+  }).then(
+      (response) =>
+      { 
+          if(response.status !== 200 && response.status !== 201)
+          {
+              throw new Error('Failed')
+          }
+          return response.json()
+      }
+  ).then(
+    (data) =>
+    {
+      console.log(data);
+      //     if (data.data.login.token)
+      //     {
+      //         const { token, userId, tokenExpiration } = data.data.login
+      //         this.context.login(token, userId, tokenExpiration)
+              
+      //         }
+      // }
+    }
+      )
+  .catch(err =>
+  { 
+      console.log(err)
+  })
   }
   modalCancelHandler = () =>
   {
@@ -32,7 +120,46 @@ export default class Events extends Component
             <BackDrop/>
             <Modal title="Add Events" canCancel canConfirm onCancel={this.modalCancelHandler } onConfirm={this.modalConfirmHandler}
             >
-          <p>This is my Modal</p>
+              <form>
+                <div className='form-control'>
+                  <label htmlFor='title'>Title</label>
+                  <input
+                    type="text"
+                    id='title'
+                    ref={this.titleEl}
+                  />
+
+                </div>
+                <div className='form-control'>
+                  <label htmlFor='price'>Price</label>
+                  <input
+                    type="number"
+                    id='price'
+                    ref={this.priceEl}
+                  />
+
+                </div>
+                <div className='form-control'>
+                  <label htmlFor='date'>Date</label>
+                  <input
+                    type="date"
+                    id='date'
+                    ref={this.dateEl}
+                  />
+
+                </div>
+                <div className='form-control'>
+                  <label htmlFor='desc'>Description</label>
+                  <textarea
+                    type="text"
+                    id='desc'
+                    rows={4}
+                    cols={40}
+                    ref={this.descEl}
+                  />
+
+                </div>
+          </form>
         </Modal>
           </>
         }

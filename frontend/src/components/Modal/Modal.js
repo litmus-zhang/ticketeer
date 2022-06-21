@@ -33,10 +33,11 @@ export default function Modal(props) {
                 padding-bottom: 1rem;
                 
               }
-              .modal_content{
+              .modal__content{
                 margin-top: 1rem;
                 display:flex;
-                flex-direction: column
+                flex-direction: column;
+                margin-left: 1rem;
               }
               .modal__header{
                 background: blue;
