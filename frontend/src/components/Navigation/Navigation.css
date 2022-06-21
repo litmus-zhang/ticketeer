@@ -38,6 +38,9 @@
     transition: all 0.4s;
 }
 .main-navigation_items a:hover, .main-navigation_items a:active{
-    color: rgb(99, 139, 226);
+    color: rgb(12, 80, 227);
     font-weight: 500; 
+    padding: 0.3rem;
+    background-color: aliceblue;
+    border-radius: 0.4rem;
 }

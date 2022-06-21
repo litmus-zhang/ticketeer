@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import AuthContext from '../context/auth-context'
 
 export default class Auth extends Component
 {
@@ -6,6 +8,8 @@ export default class Auth extends Component
         isLogin: true
 
     }
+
+    static contextType = AuthContext
     constructor(props)
     {
         super(props)
@@ -68,7 +72,15 @@ export default class Auth extends Component
                 return response.json()
             }
         ).then(
-            (data) => console.log(data))
+            (data) =>
+            {
+                if (data.data.login.token)
+                {
+                    const { token, userId, tokenExpiration } = data.data.login
+                    this.context.login(token, userId, tokenExpiration)
+                    
+                    }
+            })
         .catch(err =>
         { 
             console.log(err)
@@ -96,7 +108,11 @@ export default class Auth extends Component
             </div>
             <div className='form-actions'>
                 <button type='submit'>
+                    <Link to="/events">
                     Submit
+                    </Link>
+
+                    
             </button>
                 <button type='button' onClick={this.switchModeHandler}>
                     Switch to {this.state.isLogin ?"Signup" : "Login"}
