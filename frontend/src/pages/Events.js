@@ -10,6 +10,7 @@ export default class Events extends Component
   
   state = {
     creating: false,
+    events: []
   }
   constructor(props)
   {
@@ -21,11 +22,68 @@ export default class Events extends Component
   }
 
   static contextType = AuthContext
+
+  componentDidMount()
+  {
+    this.fetchEvents()
+  }
   startCreateEventHandler = () =>
   {
     this.setState({creating: true})
   }
+  fetchEvents()
+  {
+    const requestBody = {
+      query: `
+      query{
+        events{
+          title
+          description
+          price
+          date
+          creator{
 
+            _id
+            email
+          }
+        }
+      }
+      `
+    }
+    const token = this.context.token
+
+
+  fetch('http://localhost:4000/graphql', {
+      method: 'POST',
+      body: JSON.stringify(requestBody), 
+      headers: {
+          'Content-Type': 'application/json',
+        // 'Authorization': 'Bearer ' + token,
+          
+      }
+
+  }).then(
+      (response) =>
+      { 
+          if(response.status !== 200 && response.status !== 201)
+          {
+              throw new Error('Failed')
+          }
+          return response.json()
+      }
+  ).then(
+    (data) =>
+    {
+      const events = data.data.events
+      this.setState({events : events})
+    
+    }
+      )
+  .catch(err =>
+  { 
+      console.log(err)
+  })
+}
   modalConfirmHandler = () =>
   {
     this.setState({ creating: false })
@@ -77,7 +135,7 @@ export default class Events extends Component
       body: JSON.stringify(requestBody), 
       headers: {
           'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token,
+        Authorization: 'Bearer ' + token,
           
       }
 
@@ -94,13 +152,7 @@ export default class Events extends Component
     (data) =>
     {
       console.log(data);
-      //     if (data.data.login.token)
-      //     {
-      //         const { token, userId, tokenExpiration } = data.data.login
-      //         this.context.login(token, userId, tokenExpiration)
-              
-      //         }
-      // }
+    
     }
       )
   .catch(err =>
@@ -112,7 +164,17 @@ export default class Events extends Component
   {
     this.setState({creating: false})
   }
-  render() {
+  render()
+  {
+
+    const eventList = this.state.events.map(
+      event =>
+      {
+        return (<li key={event._id} className='events__list-item'>{event.title}</li>)
+      }
+    )
+    
+
     return (
       <div>
         {
@@ -164,19 +226,35 @@ export default class Events extends Component
           </>
         }
         
-        <div className='events-control'>
-        Share your events with others
-        <button onClick={this.startCreateEventHandler}>
-          Create Event
-          </button>
-          <p>
-            
-          </p>
-        </div>
+       <div className='events-control'>
+       
+            <button onClick={this.startCreateEventHandler}>
+              Create Event
+            </button>
+            <p>
+              Share your events with others
+            </p>
+          </div>
+        <ul className='events__list'>
+         {eventList}
+       </ul>
         
 
         <style jsx="true">
           {`
+
+          .events__list{
+            margin: 2rem auto;
+            width:40rem;
+            max-width: 90%;
+            list-style: none;
+          }
+
+          .events__list-item{
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid blue;
+          }
           .events-control{
             margin: 3rem auto;
             padding: 2rem;

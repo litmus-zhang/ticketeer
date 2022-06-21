@@ -111,8 +111,6 @@ export default class Auth extends Component
                     <Link to="/events">
                     Submit
                     </Link>
-
-                    
             </button>
                 <button type='button' onClick={this.switchModeHandler}>
                     Switch to {this.state.isLogin ?"Signup" : "Login"}
