@@ -1,12 +1,45 @@
 import React, { Component } from 'react'
+import BackDrop from '../components/Modal/BackDrop'
+import Modal from '../components/Modal/Modal'
 
-export default class Events extends Component {
+
+
+export default class Events extends Component
+{
+  
+  state = {
+    creating: false,
+  }
+
+  startCreateEventHandler = () =>
+  {
+    this.setState({creating: true})
+  }
+
+  modalConfirmHandler = () =>
+  {
+    this.setState({creating: false})
+  }
+  modalCancelHandler = () =>
+  {
+    this.setState({creating: false})
+  }
   render() {
     return (
       <div>
+        {
+          this.state.creating && <>
+            <BackDrop/>
+            <Modal title="Add Events" canCancel canConfirm onCancel={this.modalCancelHandler } onConfirm={this.modalConfirmHandler}
+            >
+          <p>This is my Modal</p>
+        </Modal>
+          </>
+        }
+        
         <div className='events-control'>
         Share your events with others
-        <button>
+        <button onClick={this.startCreateEventHandler}>
           Create Event
           </button>
           <p>
